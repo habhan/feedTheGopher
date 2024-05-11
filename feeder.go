@@ -15,11 +15,11 @@ type Item struct {
 }
 
 type Feed struct {
-	Items []Item
+	Items []Item `xml:"channel>item"`
 }
 
 func (s Item) String() string {
-	return fmt.Sprintf("Title: %s\nDescrtiption: %s", s.Title, s.Description)
+	return fmt.Sprintf("T: %s.\nD: %s.\n", s.Title, s.Description)
 }
 
 func Fetcher() {
@@ -29,14 +29,16 @@ func Fetcher() {
 	}
 	slog.Info(g.Status)
 	b, err := io.ReadAll(g.Body)
-	i := Item{"", ""}
 	if err != nil {
 		log.Panicln(err)
 	}
-	err = xml.Unmarshal(b, &i)
+	f := Feed{}
+	err = xml.Unmarshal(b, &f)
 	if err != nil {
 		log.Panicln(err)
 	}
-	fmt.Println(i)
-
+	for _, v := range f.Items {
+		fmt.Println("---")
+		fmt.Print(v)
+	}
 }
