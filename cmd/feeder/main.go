@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	feed := f.Fetcher("https://iamesports.substack.com/feed")
+	feed := f.Fetcher("https://example.substack.com/feed")
 
 	for range feed.Items {
 		continue
