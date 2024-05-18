@@ -7,7 +7,9 @@ import (
 	"log"
 	"log/slog"
 	"net/http"
-	// "golang.org/x/net/html"
+	"strings"
+
+	"golang.org/x/net/html"
 )
 
 type Item struct {
@@ -44,29 +46,28 @@ func Fetcher(url string) Feed {
 		log.Panicln(err)
 	}
 	return f
-	// Testingk
-	//	d, err := html.Parse(f.Items[0].Content)
-	//	if err != nil {
-	//		log.Panicln(err)
-	//	}
+}
+
+func MarkDowns(input *string) (result []string) {
 	//
-	//	var links []string
-	//	var linkage func(*html.Node)
-	//	linkage = func(n *html.Node) {
-	//		if n.Type == html.ElementNode && n.Data == "a" {
-	//			for _, a := range n.Attr {
-	//				if a.Key == "href" {
-	//					links = append(links, a.Val)
-	//				}
-	//			}
-	//		}
-	//		for c := n.FirstChild; c != nil; c = c.NextSibling {
-	//			linkage(c)
-	//		}
-	//	}
-	//	linkage(d)
-	//	for _, l := range links {
-	//		fmt.Println("Link:", l)
-	//	}
-	// end testink
+	r := strings.NewReader(*input)
+	t := html.NewTokenizer(r)
+	for {
+		token := t.Next()
+		switch token {
+		case html.ErrorToken:
+			return
+		case html.TextToken:
+			result = append(result, t.Token().Data)
+		case html.StartTagToken:
+			continue
+		case html.EndTagToken:
+			continue
+		default:
+			continue
+		}
+		for _, s := range result {
+			fmt.Println(s)
+		}
+	}
 }
