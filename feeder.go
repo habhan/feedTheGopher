@@ -2,7 +2,6 @@ package feeder
 
 import (
 	"encoding/xml"
-	"fmt"
 	"io"
 	"log"
 	"log/slog"
@@ -12,6 +11,7 @@ import (
 	"golang.org/x/net/html"
 )
 
+// Represents an individual Item
 type Item struct {
 	Title       string `xml:"title"`
 	Description string `xml:"description"`
@@ -19,16 +19,14 @@ type Item struct {
 	Link        string `xml:"link"`
 }
 
+// Represents the Feed from a channel
 type Feed struct {
 	Items   []Item `xml:"channel>item"`
 	IAuthor string `xml:"itunes:author"`
 	GAuthor string `xml:"googleplay:author"`
 }
 
-func (s Item) String() string {
-	return fmt.Sprintf("T: %s.\nD: %s.\n", s.Title, s.Description)
-}
-
+// Takes an url as a string and returns a Feed
 func Fetcher(url string) Feed {
 	g, err := http.Get(url)
 	if err != nil {
@@ -48,8 +46,10 @@ func Fetcher(url string) Feed {
 	return f
 }
 
+// Takes the HTML input of content and converts it to MD
+// TODO: Make this actual MD instead of slice of strings
 func MarkDowns(input *string) (result []string) {
-	//
+
 	r := strings.NewReader(*input)
 	t := html.NewTokenizer(r)
 	for {
@@ -65,9 +65,6 @@ func MarkDowns(input *string) (result []string) {
 			continue
 		default:
 			continue
-		}
-		for _, s := range result {
-			fmt.Println(s)
 		}
 	}
 }
